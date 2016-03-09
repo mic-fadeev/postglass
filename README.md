@@ -79,4 +79,4 @@ We add some module's `peerDependencies` to ignore option as default for applicat
 Please checkout [Building windows apps from non-windows platforms](https://github.com/maxogden/electron-packager#building-windows-apps-from-non-windows-platforms).
 
 ## License
-MIT © [C. T. Lin](https://github.com/mic-fadeev)
+MIT © [mic-fadeev](https://github.com/mic-fadeev)
