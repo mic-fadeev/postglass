@@ -93,6 +93,8 @@
     "exports-loader": "^0.6.3",
     "font-awesome": "^4.5.0",
     "imports-loader": "^0.6.5",
+    "joi": "^8.0.4",
+    "joi-validation-strategy": "^0.3.3",
     "ladda": "^0.9.8",
     "lodash": "^4.6.0",
     "open-ssh-tunnel": "^0.3.1",
@@ -102,6 +104,7 @@
     "react-dom": "^0.14.7",
     "react-redux": "^4.4.0",
     "react-router": "^2.0.0",
+    "react-validation-mixin": "^5.3.4",
     "redux": "^3.3.1",
     "redux-promise": "^0.5.1",
     "redux-thunk": "^1.0.3"

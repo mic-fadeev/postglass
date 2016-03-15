@@ -1,49 +1,66 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import validation from 'react-validation-mixin';
+import strategy from 'joi-validation-strategy';
+import Joi from 'joi';
+import classnames from 'classnames';
+
 const dialog = require('remote').require('dialog');
 const os = require('remote').require('os');
 const path = require('remote').require('path');
 
-import ValidateMixin from '../../base/validate-mixin/mixin';
 import * as CurrentTableActions from '../../../actions/currentTable';
 import * as FavoritesActions from '../../../actions/favorites';
+import getValidatorData, { getFieldValue } from '../../base/validatorData';
 
 
-const ContentConnectComponent = React.createClass({ // eslint-disable-line react/prefer-es6-class
-  propTypes: {
-    favorites: React.PropTypes.array.isRequired,
-    setFavorit: React.PropTypes.func.isRequired,
-    connectDB: React.PropTypes.func.isRequired
-  },
+const propTypes = {
+  favorites: React.PropTypes.array.isRequired,
+  setFavorit: React.PropTypes.func.isRequired,
+  connectDB: React.PropTypes.func.isRequired,
+  isValid: React.PropTypes.func,
+  handleValidation: React.PropTypes.func,
+  getValidationMessages: React.PropTypes.func,
+  validate: React.PropTypes.func
+};
 
-  mixins: [ValidateMixin],
 
-  getInitialState() {
-    return {
-      currentFavorit: {},
-      errors: {},
-      fields: {
-        id: { converter: this.converters.int },
-        name: null,
-        useSSH: null,
-        user: this.validators.required,
-        password: null,
-        database: this.validators.required,
-        port: this.validators.required,
-        sshUser: { depends: {
-          useSSH: this.validators.equal({ value: true }) }, validators: this.validators.required
-        },
-        sshServer: { depends: {
-          useSSH: this.validators.equal({ value: true }) }, validators: this.validators.required
-        },
-        sshPort: {
-          depends: { useSSH: this.validators.equal({ value: true }) },
-          validators: this.validators.required
-        }
-      }
+class ContentConnectComponent extends Component {
+  constructor(props) {
+    super(props);
+    this.validatorTypes = {
+      user: Joi.string().required().label('User'),
+      password: Joi.string().allow(''),
+      database: Joi.string().required().label('Database'),
+      port: Joi.number().integer().required().label('Port'),
+      useSSH: Joi.boolean(),
+      sshUser: Joi.alternatives().when('useSSH',
+          { is: true,
+            then: Joi.string().required(),
+            otherwise: Joi.string().allow('')
+          }),
+      sshPassword: Joi.string().allow(''),
+      sshServer: Joi.alternatives().when('useSSH',
+          { is: true,
+            then: Joi.string().required(),
+            otherwise: Joi.string().allow('')
+          }),
+      sshPort: Joi.alternatives().when('useSSH',
+          { is: true,
+            then: Joi.number().integer().required(),
+            otherwise: Joi.string().allow('')
+          })
     };
-  },
+    this.getValidatorData = this.getValidatorData.bind(this);
+    this.getClasses = this.getClasses.bind(this);
+    this.showDialog = this.showDialog.bind(this);
+    this.setFavorit = this.setFavorit.bind(this);
+    this.delFavorit = this.delFavorit.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  state = { currentFavorit: {} };
 
   componentWillReceiveProps(nextProps) {
     for (const favorit of nextProps.favorites) {
@@ -51,64 +68,73 @@ const ContentConnectComponent = React.createClass({ // eslint-disable-line react
         this.setState({ currentFavorit: Object.assign({}, favorit) });
         return;
       }
+      this.setState({ currentFavorit: {} });
     }
-    this.setState({ currentFavorit: {} });
-  },
+  }
+
+  onChange(field) {
+    return event => {
+      this.props.handleValidation(field);
+      const currentFavorit = this.state.currentFavorit;
+      currentFavorit[field] = getFieldValue(event.target);
+      this.setState({ currentFavorit });
+    };
+  }
+
+  getClasses(field) {
+    return classnames({
+      'form-group': true,
+      'has-error': !this.props.isValid(field)
+    });
+  }
+
+  getValidatorData() {
+    return getValidatorData(this.refs, this.validatorTypes);
+  }
 
   setFavorit() {
-    const res = this.validate();
     const favorites = this.props.favorites;
     let favorit = null;
+    const currentFavorit = Object.assign({}, this.state.currentFavorit, this.getValidatorData());
 
-    if (Object.keys(res.errors).length !== 0) {
-      this.setState({ errors: res.errors });
-    } else {
-      let index = 0;
-      for (const favoritItem of favorites) {
-        if (favoritItem.id === res.data.id) {
-          favorit = favoritItem;
-          break;
+    this.setState({ currentFavorit });
+    const onValidate = (error) => {
+      if (!error) {
+        let index = 0;
+        for (const favoritItem of favorites) {
+          if (favoritItem.id === currentFavorit.id) {
+            favorit = favoritItem;
+            break;
+          }
+          index += 1;
         }
-        index += 1;
-      }
-      if (favorit) {
-        favorites[index] = res.data;
-      } else {
-        if (favorites.length) {
-          res.data.id = favorites[favorites.length - 1].id + 1;
+        if (favorit) {
+          favorites[index] = currentFavorit;
         } else {
-          res.data.id = 1;
+          if (favorites.length) {
+            currentFavorit.id = favorites[favorites.length - 1].id + 1;
+          } else {
+            currentFavorit.id = 1;
+          }
+          favorites.push(currentFavorit);
         }
-        favorites.push(res.data);
+        this.props.setFavorit(favorites, currentFavorit.id);
       }
-      res.data.privateKey = this.state.currentFavorit.privateKey;
-      this.props.setFavorit(favorites, res.data.id);
-    }
-  },
+    };
+    this.props.validate(onValidate);
+  }
 
   handleSubmit(event) {
     event.preventDefault();
-    const res = this.validate();
-
-    if (Object.keys(res.errors).length !== 0) {
-      this.setState({ errors: res.errors });
-    } else {
-      res.data.privateKey = this.state.currentFavorit.privateKey;
-      this.props.connectDB(res.data);
-    }
-  },
-
-
-  handleChange(event) {
-    const validateObj = {};
-    const fieldName = event.target.name;
-    const currentFavorit = this.state.currentFavorit;
-
-    validateObj[fieldName] = this.state.fields[fieldName];
-    const res = this.validate('change', validateObj);
-    currentFavorit[fieldName] = res.data[fieldName];
-    this.setState({ errors: res.errors, currentFavorit });
-  },
+    const currentFavorit = Object.assign({}, this.state.currentFavorit, this.getValidatorData());
+    this.setState({ currentFavorit });
+    const onValidate = (error) => {
+      if (!error) {
+        this.props.connectDB(this.state.currentFavorit);
+      }
+    };
+    this.props.validate(onValidate);
+  }
 
   showDialog(event) {
     event.preventDefault();
@@ -118,8 +144,7 @@ const ContentConnectComponent = React.createClass({ // eslint-disable-line react
       currentFavorit.privateKey = file[0];
       this.setState({ currentFavorit });
     });
-  },
-
+  }
 
   delFavorit() {
     const favorites = this.props.favorites;
@@ -132,10 +157,9 @@ const ContentConnectComponent = React.createClass({ // eslint-disable-line react
     }
     favorites.splice(index, 1);
     this.props.setFavorit(favorites);
-  },
+  }
 
   render() {
-    const errors = this.state.errors;
     const currentFavorit = this.state.currentFavorit;
 
     return (
@@ -155,9 +179,12 @@ const ContentConnectComponent = React.createClass({ // eslint-disable-line react
                       <div>
                         <form className="m-t" role="form" onSubmit={this.handleSubmit}>
                           <input type="hidden" ref="id" value={currentFavorit.id} />
-                          <div className="form-group">
+                          <div className={this.getClasses('name')}>
+                            <label className="error">
+                              {this.props.getValidationMessages('name')}
+                            </label>
                             <input className="form-control" name="name"
-                              onChange={this.handleChange}
+                              onChange={this.onChange('name')}
                               placeholder="Connection name"
                               ref="name"
                               value={currentFavorit.name}
@@ -165,31 +192,38 @@ const ContentConnectComponent = React.createClass({ // eslint-disable-line react
                             />
                           </div>
 
-                          <div className={errors.user ? 'form-group has-error' : 'form-group'}>
-                            <label className="error">{errors.user}</label>
+                          <div className={this.getClasses('user')}>
+                            <label className="error">
+                              {this.props.getValidationMessages('user')}
+                            </label>
                             <input className="form-control" name="user"
-                              onChange={this.handleChange}
                               placeholder="User"
                               ref="user"
                               value={currentFavorit.user}
                               type="text"
+                              onChange={this.onChange('user')}
                             />
                           </div>
 
-                          <div className="form-group">
+                          <div className={this.getClasses('password')}>
+                            <label className="error">
+                              {this.props.getValidationMessages('password')}
+                            </label>
                             <input className="form-control" name="password"
-                              onChange={this.handleChange}
                               placeholder="Password"
                               ref="password"
                               value={currentFavorit.password}
                               type="password"
+                              onChange={this.onChange('password')}
                             />
                           </div>
 
-                          <div className={errors.database ? 'form-group has-error' : 'form-group'}>
-                            <label className="error">{errors.database}</label>
+                          <div className={this.getClasses('database')}>
+                            <label className="error">
+                              {this.props.getValidationMessages('database')}
+                            </label>
                             <input className="form-control" name="database"
-                              onChange={this.handleChange}
+                              onChange={this.onChange('database')}
                               placeholder="Database"
                               ref="database"
                               value={currentFavorit.database}
@@ -197,10 +231,12 @@ const ContentConnectComponent = React.createClass({ // eslint-disable-line react
                             />
                           </div>
 
-                          <div className={errors.port ? 'form-group has-error' : 'form-group'}>
-                            <label className="error">{errors.database}</label>
+                          <div className={this.getClasses('port')}>
+                            <label className="error">
+                              {this.props.getValidationMessages('port')}
+                            </label>
                             <input className="form-control" name="port"
-                              onChange={this.handleChange}
+                              onChange={this.onChange('port')}
                               placeholder="Port"
                               ref="port"
                               value={currentFavorit.port}
@@ -212,68 +248,76 @@ const ContentConnectComponent = React.createClass({ // eslint-disable-line react
                           <div className="checkbox">
                             <label>
                               <input ref="useSSH" name="useSSH" checked={currentFavorit.useSSH}
-                                onChange={this.handleChange} type="checkbox"
+                                onChange={this.onChange('useSSH')} type="checkbox"
                               /> Connect via SSH
                             </label>
                           </div>
                           { currentFavorit && currentFavorit.useSSH &&
-                            <div>
-                              <div className="form-group">
-                                <label className="error">{errors.sshUser}</label>
-                                <input className="form-control" name="sshUser"
-                                  onChange={this.handleChange}
-                                  placeholder="SSH user"
-                                  value={currentFavorit.sshUser}
-                                  ref="sshUser"
-                                  type="text"
-                                />
-                              </div>
-
-                              <div className="form-group">
-                                <label className="error">{errors.sshUser}</label>
-                                <input className="form-control" name="sshPassword"
-                                  onChange={this.handleChange}
-                                  placeholder="SSH password"
-                                  value={currentFavorit.sshPassword}
-                                  ref="sshPassword"
-                                  type="password"
-                                />
-                              </div>
-
-                              <div className="form-group">
-                                <label className="error">{errors.sshServer}</label>
-                                <input className="form-control" name="sshServer"
-                                  onChange={this.handleChange}
-                                  placeholder="SSH server"
-                                  value={currentFavorit.sshServer}
-                                  ref="sshServer"
-                                  type="text"
-                                />
-                              </div>
-
-                              <div className="form-group">
-                                <label className="error">{errors.sshPort}</label>
-                                <input className="form-control" name="sshPort"
-                                  onChange={this.handleChange}
-                                  placeholder="SSH port"
-                                  defaultValue="22"
-                                  value={currentFavorit.sshPort}
-                                  ref="sshPort"
-                                  type="text"
-                                />
-                              </div>
-
-                              <div className="form-group">
-                                <label>{currentFavorit.privateKey}</label><br />
-                                <label className="btn btn-primary">
-                                  <input ref="sshKey" type="file" className="hide"
-                                    onClick={this.showDialog}
-                                  />
-                                  Private key
-                                </label>
-                              </div>
-
+                          <div>
+                            <div className={this.getClasses('sshUser')}>
+                              <label className="error">
+                                {this.props.getValidationMessages('sshUser')}
+                              </label>
+                              <input className="form-control" name="sshUser"
+                                onChange={this.onChange('sshUser')}
+                                placeholder="SSH user"
+                                value={currentFavorit.sshUser}
+                                ref="sshUser"
+                                type="text"
+                              />
                             </div>
+
+                            <div className={this.getClasses('sshPassword')}>
+                              <label className="error">
+                                {this.props.getValidationMessages('sshPassword')}
+                              </label>
+                              <input className="form-control" name="sshPassword"
+                                onChange={this.onChange('sshPassword')}
+                                placeholder="SSH password"
+                                value={currentFavorit.sshPassword}
+                                ref="sshPassword"
+                                type="password"
+                              />
+                            </div>
+
+                            <div className={this.getClasses('sshServer')}>
+                              <label className="error">
+                                {this.props.getValidationMessages('sshServer')}
+                              </label>
+                              <input className="form-control" name="sshServer"
+                                onChange={this.onChange('sshServer')}
+                                placeholder="SSH server"
+                                value={currentFavorit.sshServer}
+                                ref="sshServer"
+                                type="text"
+                              />
+                            </div>
+
+                            <div className={this.getClasses('sshPort')}>
+                              <label className="error">
+                                {this.props.getValidationMessages('sshPort')}
+                              </label>
+                              <input className="form-control" name="sshPort"
+                                onChange={this.onChange('sshPort')}
+                                placeholder="SSH port"
+                                defaultValue="22"
+                                value={currentFavorit.sshPort}
+                                ref="sshPort"
+                                type="text"
+                              />
+                            </div>
+
+                            <div className="form-group">
+                              <label>{currentFavorit.privateKey}</label><br />
+                              <label className="btn btn-primary">
+                                <input ref="sshKey" type="file" className="hide"
+                                  onClick={this.showDialog}
+                                />
+                                Private key
+                              </label>
+                            </div>
+
+                          </div>
                           }
 
                           <button className="btn btn-primary block full-width m-b" type="submit">
@@ -306,8 +350,9 @@ const ContentConnectComponent = React.createClass({ // eslint-disable-line react
       </div>
     );
   }
-});
+}
 
+ContentConnectComponent.propTypes = propTypes;
 
 function mapStateToProps(state) {
   return {
@@ -320,4 +365,6 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ ...CurrentTableActions, ...FavoritesActions }, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ContentConnectComponent);
+export default connect(mapStateToProps, mapDispatchToProps)(
+  validation(strategy)(ContentConnectComponent)
+);
