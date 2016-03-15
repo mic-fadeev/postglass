@@ -22,6 +22,7 @@ const propTypes = {
   isValid: React.PropTypes.func,
   handleValidation: React.PropTypes.func,
   getValidationMessages: React.PropTypes.func,
+  clearValidations: React.PropTypes.func,
   validate: React.PropTypes.func
 };
 
@@ -65,17 +66,20 @@ class ContentConnectComponent extends Component {
   componentWillReceiveProps(nextProps) {
     for (const favorit of nextProps.favorites) {
       if (favorit.isCurrent) {
-        this.setState({ currentFavorit: Object.assign({}, favorit) });
+        if (this.state.currentFavorit.id !== favorit.id) {
+          this.setState({ currentFavorit: Object.assign({}, favorit) });
+          this.props.clearValidations();
+        }
         return;
       }
-      this.setState({ currentFavorit: {} });
     }
+    this.setState({ currentFavorit: {} });
   }
 
   onChange(field) {
     return event => {
-      this.props.handleValidation(field);
       const currentFavorit = this.state.currentFavorit;
+      this.props.validate(field);
       currentFavorit[field] = getFieldValue(event.target);
       this.setState({ currentFavorit });
     };
@@ -162,6 +166,7 @@ class ContentConnectComponent extends Component {
   render() {
     const currentFavorit = this.state.currentFavorit;
 
+
     return (
       <div className="gray-bg dashbard-1" id="page-wrapper">
         <div className="wrapper wrapper-content">
@@ -199,8 +204,8 @@ class ContentConnectComponent extends Component {
                             <input className="form-control" name="user"
                               placeholder="User"
                               ref="user"
-                              value={currentFavorit.user}
                               type="text"
+                              value={currentFavorit.user}
                               onChange={this.onChange('user')}
                             />
                           </div>
