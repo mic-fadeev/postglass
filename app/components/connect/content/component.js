@@ -73,7 +73,9 @@ class ContentConnectComponent extends Component {
         return;
       }
     }
-    this.setState({ currentFavorit: {} });
+    if (this.state.currentFavorit.id) {
+      this.setState({ currentFavorit: {} });
+    }
   }
 
   onChange(field) {
@@ -165,7 +167,6 @@ class ContentConnectComponent extends Component {
 
   render() {
     const currentFavorit = this.state.currentFavorit;
-
 
     return (
       <div className="gray-bg dashbard-1" id="page-wrapper">
