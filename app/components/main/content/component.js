@@ -20,8 +20,11 @@ const propTypes = {
 };
 
 
+
+
 class MainComponent extends Component {
   componentWillMount() {
+
     let currentTable = window.localStorage.currentTable;
     if (currentTable) {
       let isFind = false;
@@ -40,16 +43,16 @@ class MainComponent extends Component {
     this.props.setCurrentTable(currentTable);
     this.props.getTableContent({ tableName: currentTable });
   }
-
   render() {
-    const { items, isFetching } = this.props;
+    const {titleTable, items, isFetching } = this.props;
     return (
       <div className="gray-bg dashbard-1" id="page-wrapper">
           {!isFetching &&
             <div>
-            <table className="table table-bordered">
+            
+            <table className ="table table-bordered ">
               <thead>
-                <HeadersComponent item={ items[0] } />
+                 <HeadersComponent titleTable={titleTable}/>
               </thead>
               <tbody>
                 {
@@ -71,10 +74,10 @@ class MainComponent extends Component {
                 }
               </tbody>
             </table>
-              <PaginationComponent />
-            </div>
+              <PaginationComponent items={this.items}/>
+             </div>
           }
-          <SpinnerComponent isShow={isFetching} />
+          <SpinnerComponent isShow={isFetching}/>
       </div>
     );
   }
@@ -84,6 +87,7 @@ MainComponent.propTypes = propTypes;
 
 function mapStateToProps(state) {
   return {
+    titleTable: state.currentTable.titleTable,
     items: state.currentTable.items,
     isFetching: state.currentTable.isFetching,
     tables: state.tables

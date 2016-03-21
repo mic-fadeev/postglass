@@ -4,14 +4,15 @@ export const GET_TABLE_CONTENT = 'GET_TABLE_CONTENT';
 export const CONNECT = 'CONNECT';
 
 
-function returnContent(currentTable, isFetching, totalCount, order, page) {
+function returnContent(currentTable, isFetching, totalCount, order, page, titleTable) {
   return {
     type: GET_TABLE_CONTENT,
     currentTable,
     isFetching,
     totalCount,
     order,
-    page
+    page,
+    titleTable
   };
 }
 
@@ -19,8 +20,8 @@ export function getTableContent(params = { page: 1, order: [] }) {
   ipcRenderer.send('get-table-content', params);
   return dispatch => {
     dispatch(returnContent([], true, 0));
-    ipcRenderer.once('get-table-content', (event, data, totalCount, order, page) => {
-      dispatch(returnContent(fixTempIssue(data), false, totalCount, order, page));
+    ipcRenderer.once('get-table-content', (event, data, totalCount, order, page, titleTable) => {
+      dispatch(returnContent(fixTempIssue(data), false, totalCount, order, page, titleTable));
     });
   };
 }

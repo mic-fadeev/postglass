@@ -14,7 +14,7 @@ const propTypes = {
   getTableContent: React.PropTypes.func.isRequired,
   currentPage: React.PropTypes.number.isRequired,
   order: React.PropTypes.array.isRequired,
-  item: React.PropTypes.object.isRequired
+  titleTable: React.PropTypes.array.isRequired
 };
 
 
@@ -52,13 +52,11 @@ class HeadersComponent extends Component {
     };
     this.props.getTableContent(params);
   }
-
   render() {
     const headers = [];
     let key = 0;
     const order = this.props.order;
-
-    for (const [fieldName] of Object.entries(this.props.item)) {
+    for (const fieldName of (this.props.titleTable || [])) {
       key += 1;
       const orderItem = _.find(order, { fieldName });
       const index = orderItem && _.findIndex(order, { fieldName, type: orderItem.type });
