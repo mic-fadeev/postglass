@@ -33,6 +33,7 @@ class ContentConnectComponent extends Component {
     this.validatorTypes = {
       user: Joi.string().required().label('User'),
       password: Joi.string().allow(''),
+      address: Joi.string().required(),
       database: Joi.string().required().label('Database'),
       port: Joi.number().integer().required().label('Port'),
       useSSH: Joi.boolean(),
@@ -223,6 +224,22 @@ class ContentConnectComponent extends Component {
                               onChange={this.onChange('password')}
                             />
                           </div>
+
+
+                          <div className={this.getClasses('address')}>
+                            <label className="error">
+                              {this.props.getValidationMessages('address')}
+                            </label>
+                            <input className="form-control" name="address"
+                              onChange={this.onChange('address')}
+                              placeholder="Host"
+                              ref="address"
+                              value={currentFavorit.address}
+                              defaultValue="localhost"
+                              type="text"
+                            />
+                          </div>
+
 
                           <div className={this.getClasses('database')}>
                             <label className="error">
