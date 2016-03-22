@@ -16,7 +16,8 @@ const propTypes = {
   items: React.PropTypes.array.isRequired,
   setCurrentTable: React.PropTypes.func.isRequired,
   getTableContent: React.PropTypes.func.isRequired,
-  isFetching: React.PropTypes.bool.isRequired
+  isFetching: React.PropTypes.bool.isRequired,
+  titleTable: React.PropTypes.array.isRequired,
 };
 
 
@@ -40,41 +41,43 @@ class MainComponent extends Component {
     this.props.setCurrentTable(currentTable);
     this.props.getTableContent({ tableName: currentTable });
   }
-
   render() {
-    const { items, isFetching } = this.props;
+    const { titleTable, items, isFetching } = this.props;
     return (
-      <div className="gray-bg dashbard-1" id="page-wrapper">
-          {!isFetching &&
+      <div className="gray-bg dashbard-1 mainContent" id="page-wrapper">
+          { !isFetching &&
             <div>
-            <table className="table table-bordered">
+            <table className ="table table-bordered ">
               <thead>
-                <HeadersComponent item={ items[0] } />
+                <HeadersComponent titleTable = {titleTable} />
               </thead>
               <tbody>
                 {
                   items.map((item, key) => {
                     const fields = [];
                     let keyA = 0;
-                    for (const [, fieldValue] of Object.entries(item)) {
+                    for (const header of titleTable) {
                       keyA += 1;
                       fields.push(
-                        <td key={keyA}>{fieldValue}</td>
+                        <td key={keyA}>{item[header]}</td>
                       );
                     }
                     return (
-                      <tr key={key}>
-                        {fields}
-                      </tr>
+                    <tr key={key}>
+                      {fields}
+                    </tr>
                     );
                   })
                 }
               </tbody>
             </table>
-              <PaginationComponent />
-            </div>
+            <PaginationComponent items={this.items} />
+
+          </div>
+
           }
-          <SpinnerComponent isShow={isFetching} />
+
+        <SpinnerComponent isShow={isFetching} />
       </div>
     );
   }
@@ -84,6 +87,7 @@ MainComponent.propTypes = propTypes;
 
 function mapStateToProps(state) {
   return {
+    titleTable: state.currentTable.titleTable,
     items: state.currentTable.items,
     isFetching: state.currentTable.isFetching,
     tables: state.tables

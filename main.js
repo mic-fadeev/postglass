@@ -49,6 +49,7 @@ function fixTempIssue(data) {
   return data;
 }
 
+
 /* eslint no-param-reassign: [2, { "props": false }] */
 function getTables(client, event) {
   const query = `
@@ -101,9 +102,25 @@ function getTableContent(client, event, argObj) {
         if (error) {
           reconnectDB(event, 'get-table-content', argObj);
         } else {
-          event.sender.send(
-            'get-table-content', fixTempIssue(res.rows), totalCount, order, page
-          );
+          if (!offset) {
+            const titleQuery = `
+                SELECT column_name FROM information_schema.columns
+                WHERE table_name='${argObj.tableName}';`;
+            client.query(titleQuery, (titleError, resTitle) => {
+              if (titleError) {
+                reconnectDB(event, 'get-table-content', argObj);
+              } else {
+                const titleTable = resTitle.rows.map(key => key.column_name);
+                event.sender.send(
+                  'get-table-content', fixTempIssue(res.rows), totalCount, order, page, titleTable
+                );
+              }
+            });
+          } else {
+            event.sender.send(
+              'get-table-content', fixTempIssue(res.rows), totalCount, order, page
+            );
+          }
         }
       });
     }
@@ -166,7 +183,7 @@ ipcMain.on('connect-db', (event, params) => {
       dstPort: params.port,
       srcPort: 5433,
       srcAddr: '127.0.0.1',
-      dstAddr: '127.0.0.1',
+      dstAddr: params.address,
       readyTimeout: 5000,
       forwardTimeout: 2000,
       localPort: 5433,
@@ -180,13 +197,13 @@ ipcMain.on('connect-db', (event, params) => {
     }
     openSshTunnel(opts).then(server => {
       sshServer = server;
-      connectUrl = `postgres://${params.user}:${params.password}@localhost:5433/${params.database}`;
+      connectUrl = `postgres://${params.user}:${params.password}@${params.address}:5433/${params.database}`;
       connectDB(event, 'connect-db');
     }).catch(err => {
       console.error(err); // eslint-disable-line
     });
   } else {
-    connectUrl = `postgres://${params.user}:${params.password}@localhost:${params.port}/${params.database}`;
+    connectUrl = `postgres://${params.user}:${params.password}@${params.address}:${params.port}/${params.database}`;
     connectDB(event, 'connect-db');
   }
 });
@@ -194,7 +211,7 @@ ipcMain.on('connect-db', (event, params) => {
 
 app.on('activate', () => {
   if (mainWindow === null) {
-    mainWindow = new BrowserWindow({ width: 1600, height: 900 });
+    mainWindow = new BrowserWindow({ width: 1600, height: 900, minWidth: 800, minHeight: 400 });
 
     if (process.env.HOT) {
       mainWindow.loadURL(`file://${__dirname}/app/hot-dev-app.html`);
@@ -381,24 +398,23 @@ app.on('ready', () => {
         }
       }]
     }];
+
+    mainWindow = new BrowserWindow({ width: 1600, height: 900, minWidth: 800, minHeight: 400 });
+
+    if (process.env.HOT) {
+      mainWindow.loadURL(`file://${__dirname}/app/hot-dev-app.html`);
+    } else {
+      mainWindow.loadURL(`file://${__dirname}/app/app.html`);
+    }
+    mainWindow.on('closed', () => {
+      mainWindow = null;
+    });
+
+    if (process.env.NODE_ENV === 'development') {
+      mainWindow.openDevTools();
+    }
     menu = Menu.buildFromTemplate(template);
     mainWindow.setMenu(menu);
-  }
-
-  mainWindow = new BrowserWindow({ width: 1600, height: 900 });
-
-  if (process.env.HOT) {
-    mainWindow.loadURL(`file://${__dirname}/app/hot-dev-app.html`);
-  } else {
-    mainWindow.loadURL(`file://${__dirname}/app/app.html`);
-  }
-
-  mainWindow.on('closed', () => {
-    mainWindow = null;
-  });
-
-  if (process.env.NODE_ENV === 'development') {
-    mainWindow.openDevTools();
   }
 });
 
