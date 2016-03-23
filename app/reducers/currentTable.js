@@ -16,9 +16,9 @@ export default function currentTable(currentTableDefault = {
         items: action.currentTable,
         isFetching: action.isFetching,
         isConnected: true,
-        totalCount: action.totalCount,
+        totalCount: action.totalCount !== undefined ? action.totalCount : currentTableDefault.totalCount, // eslint-disable-line
         order: action.order,
-        page: action.page,
+        page: action.page !== undefined ? action.page : currentTableDefault.page,
         titleTable: action.titleTable || currentTableDefault.titleTable
       };
     case CONNECT:

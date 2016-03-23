@@ -104,46 +104,47 @@ class PaginationComponent extends Component {
     const maxPage = this.getMaxPage();
     const row = this.getRow();
     const maxRow = this.props.totalCount;
-    if (this.props.totalCount) {
-      return (
-        <div className="pagination-fixed">
-        <div className="searchPage">
+
+    return (
+      <div className="pagination-fixed">
+      <div className="searchPage">
+        </div>
+          <div className="footer fixed">
+          <div className="currentRow">
+          {this.props.items.length ?
+            <span className="btn"> {row} of {maxRow}</span> :
+            <span className="btn">Loading rows...</span>
+          }
           </div>
-            <div className="footer fixed">
-            <div className="currentRow">
-            <span className="btn"> {row} of {maxRow}</span>
-            </div>
-            <div className="btn-group">
-              <button disabled={page === 1}
-                onClick={this.prevPaginate}
-                className="btn btn-link"
-              >
-                <i className="fa fa-chevron-left"></i>
-              </button>
-            <OverlayTrigger trigger="click"
-              placement="top"
-              overlay={<Popover id="popover"><form onSubmit={this.showSearchPage}>
-                  <input type="text"
-                    ref="pageForm"
-                  />
-                </form>
-                </Popover>}
+          <div className="btn-group">
+            <button disabled={page === 1}
+              onClick={this.prevPaginate}
+              className="btn btn-link"
             >
-            <Button bsStyle="default">
-              Page {page} of {maxPage}</Button>
-            </OverlayTrigger>
-              <button disabled={page === maxPage}
-                onClick={this.nextPaginate}
-                className="btn btn-link"
-              >
-                <i className="fa fa-chevron-right"></i>
-              </button>
-            </div>
+              <i className="fa fa-chevron-left"></i>
+            </button>
+          <OverlayTrigger trigger="click"
+            placement="top"
+            overlay={<Popover id="popover"><form onSubmit={this.showSearchPage}>
+                <input type="text"
+                  ref="pageForm"
+                />
+              </form>
+              </Popover>}
+          >
+          <Button bsStyle="default">
+            Page {page} of {maxPage}</Button>
+          </OverlayTrigger>
+            <button disabled={page === maxPage}
+              onClick={this.nextPaginate}
+              className="btn btn-link"
+            >
+              <i className="fa fa-chevron-right"></i>
+            </button>
           </div>
         </div>
-      );
-    }
-    return null;
+      </div>
+    );
   }
 }
 

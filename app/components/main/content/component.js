@@ -71,12 +71,11 @@ class MainComponent extends Component {
                 }
               </tbody>
             </table>
-            <PaginationComponent items={this.items} />
-
           </div>
 
           }
 
+        <PaginationComponent />
         <SpinnerComponent isShow={isFetching} />
       </div>
     );

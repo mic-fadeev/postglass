@@ -19,7 +19,7 @@ function returnContent(currentTable, isFetching, totalCount, order, page, titleT
 export function getTableContent(params = { page: 1, order: [] }) {
   ipcRenderer.send('get-table-content', params);
   return dispatch => {
-    dispatch(returnContent([], true, 0));
+    dispatch(returnContent([], true, undefined, undefined, params.page));
     ipcRenderer.once('get-table-content', (event, data, totalCount, order, page, titleTable) => {
       dispatch(returnContent(fixTempIssue(data), false, totalCount, order, page, titleTable));
     });
