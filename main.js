@@ -272,4 +272,3 @@ app.on('ready', () => {
     mainWindow.setMenu(menu);
   }
 });
-
