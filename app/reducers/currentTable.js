@@ -13,7 +13,7 @@ export default function currentTable(currentTableDefault = {
   switch (action.type) {
     case GET_TABLE_CONTENT:
       return {
-        items: action.currentTable,
+        items: action.currentTable !== undefined ? action.currentTable : currentTableDefault.items,
         isFetching: action.isFetching,
         isConnected: true,
         totalCount: action.totalCount !== undefined ? action.totalCount : currentTableDefault.totalCount, // eslint-disable-line

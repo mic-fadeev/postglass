@@ -48,36 +48,32 @@ class MainComponent extends Component {
     const { titleTable, items, isFetching } = this.props;
     return (
       <div className="gray-bg dashbard-1 mainContent" id="page-wrapper">
-          { !isFetching &&
-            <div>
-            <table className ="table table-bordered ">
-              <thead>
-                <HeadersComponent titleTable = {titleTable} />
-              </thead>
-              <tbody>
-                {
-                  items.map((item, key) => {
-                    const fields = [];
-                    let keyA = 0;
-                    for (const header of titleTable) {
-                      keyA += 1;
-                      fields.push(
-                        <td key={keyA}>{item[header]}</td>
-                      );
-                    }
-                    return (
-                    <tr key={key}>
-                      {fields}
-                    </tr>
+        <div>
+          <table className ="table table-bordered ">
+            <thead>
+              <HeadersComponent titleTable = {titleTable} />
+            </thead>
+            <tbody>
+              {
+                items.map((item, key) => {
+                  const fields = [];
+                  let keyA = 0;
+                  for (const header of titleTable) {
+                    keyA += 1;
+                    fields.push(
+                      <td key={keyA}>{item[header]}</td>
                     );
-                  })
-                }
-              </tbody>
-            </table>
-          </div>
-
-          }
-
+                  }
+                  return (
+                  <tr key={key}>
+                    {fields}
+                  </tr>
+                  );
+                })
+              }
+            </tbody>
+          </table>
+        </div>
         <PaginationComponent />
         <SpinnerComponent isShow={isFetching} />
       </div>
