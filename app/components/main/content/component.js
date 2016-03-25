@@ -22,25 +22,28 @@ const propTypes = {
 
 
 class MainComponent extends Component {
-  componentWillMount() {
-    let currentTable = window.localStorage.currentTable;
-    if (currentTable) {
-      let isFind = false;
-      for (const table of this.props.tables) {
-        if (table.table_name === currentTable) {
-          isFind = true;
-          break;
+  componentWillReceiveProps(nextProps) {
+    if (!this.props.tables.length && nextProps.tables.length) {
+      let currentTable = window.localStorage.currentTable;
+      if (currentTable) {
+        let isFind = false;
+        for (const table of nextProps.tables) {
+          if (table.table_name === currentTable) {
+            isFind = true;
+            break;
+          }
         }
+        if (!isFind) {
+          currentTable = nextProps.tables[0].table_name;
+        }
+      } else {
+        currentTable = nextProps.tables[0].table_name;
       }
-      if (!isFind) {
-        currentTable = this.props.tables[0].table_name;
-      }
-    } else {
-      currentTable = this.props.tables[0].table_name;
+      this.props.setCurrentTable(currentTable);
+      this.props.getTableContent({ tableName: currentTable });
     }
-    this.props.setCurrentTable(currentTable);
-    this.props.getTableContent({ tableName: currentTable });
   }
+
   render() {
     const { titleTable, items, isFetching } = this.props;
     return (

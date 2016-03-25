@@ -22,7 +22,7 @@ export default function currentTable(currentTableDefault = {
         titleTable: action.titleTable || currentTableDefault.titleTable
       };
     case CONNECT:
-      return Object.assign({}, currentTableDefault, { isConnected: action.connect.success });
+      return Object.assign({}, currentTableDefault, { isConnected: action.connect });
     default:
       return currentTableDefault;
   }

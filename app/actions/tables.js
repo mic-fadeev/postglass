@@ -1,4 +1,4 @@
-const ipcRenderer = require('electron').ipcRenderer;
+import DB from '../db';
 
 export const GET_TABLES = 'GET_TABLES';
 export const SET_CURRENT_TABLE = 'SET_CURRENT_TABLE';
@@ -12,8 +12,17 @@ export function setCurrentTable(tableName) {
 }
 
 export function getTables() {
-  return {
-    type: GET_TABLES,
-    tables: ipcRenderer.sendSync('get-tables')
+  return dispatch => {
+    DB.getTables((tables, err) => {
+      /*eslint-disable */
+      dispatch((() => {
+        return {
+          type: GET_TABLES,
+          tables,
+          err
+        };
+      })());
+      /*eslint-enable */
+    });
   };
 }

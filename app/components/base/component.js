@@ -14,7 +14,6 @@ const propTypes = {
 class BaseComponent extends Component {
   render() {
     const { isConnected } = this.props;
-
     return (
       <div id="wrapper" className="max-height">
       {isConnected ?

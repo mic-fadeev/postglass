@@ -5,6 +5,7 @@ import { Router, hashHistory } from 'react-router';
 import routes from './routes';
 import configureStore from './store/configureStore';
 import './styles/main.less';
+import DB from './db';
 require('babel-polyfill');
 
 const store = configureStore();
@@ -25,3 +26,8 @@ if (process.env.NODE_ENV !== 'production') {
   // module and its dependencies as dead code.
   // require('./createDevToolsWindow')(store);
 }
+
+
+window.onbeforeunload = function closeWindow() {
+  DB.disconnectDB();
+};
