@@ -18,7 +18,7 @@ function returnContent(currentTable, isFetching, totalCount, order, page, titleT
 
 export function getTableContent(params = { page: 1, order: [] }) {
   return dispatch => {
-    dispatch(returnContent([], true, undefined, undefined, params.page));
+    dispatch(returnContent(undefined, true, undefined, undefined, params.page));
     DB.getTableContent(params, (data, totalCount, order, page, titleTable) => {
       dispatch(returnContent(fixTempIssue(data), false, totalCount, order, page, titleTable));
     });

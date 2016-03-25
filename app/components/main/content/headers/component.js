@@ -28,18 +28,16 @@ class HeadersComponent extends Component {
     const order = this.props.order;
     switch (icon.className) {
       case 'fa fa-sort':
+        order.length = 0;
         order.push({ fieldName, type: 'ASC' });
         break;
       case 'fa fa-sort-asc': {
-        const indexOfAsc = _.findIndex(order, { fieldName, type: 'ASC' });
-        const orderItem = order.splice(indexOfAsc, 1)[0];
-        orderItem.type = 'DESC';
-        order.push(orderItem);
+        order.length = 0;
+        order.push({ fieldName, type: 'DESC' });
         break;
       }
       case 'fa fa-sort-desc': {
-        const indexOfDesc = _.findIndex(order, { fieldName, type: 'DESC' });
-        order.splice(indexOfDesc, 1);
+        order.length = 0;
         break;
       }
       default:
