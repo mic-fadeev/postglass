@@ -48,7 +48,7 @@ class MainComponent extends Component {
     const { titleTable, items, isFetching } = this.props;
     return (
       <div className="gray-bg dashbard-1 mainContent" id="page-wrapper">
-        <div>
+        <div id="table-wrapper">
           <table className ="table table-bordered ">
             <thead>
               <HeadersComponent titleTable = {titleTable} />
