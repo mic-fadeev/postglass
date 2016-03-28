@@ -107,7 +107,6 @@ export default class DB {
   static handleError(err) {
     if (err) {
       pg.end();
-      console.log(err);
     }
   }
 

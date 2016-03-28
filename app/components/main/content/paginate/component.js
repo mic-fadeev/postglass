@@ -12,6 +12,7 @@ const propTypes = {
   totalCount: React.PropTypes.number.isRequired,
   currentPage: React.PropTypes.number.isRequired,
   items: React.PropTypes.array.isRequired,
+  isFetching: React.PropTypes.bool.isRequired,
   titleTable: React.PropTypes.array.isRequired,
 };
 
@@ -111,9 +112,9 @@ class PaginationComponent extends Component {
         </div>
           <div className="footer fixed">
           <div className="currentRow">
-          {this.props.items.length ?
-            <span className="btn"> {row} of {maxRow}</span> :
-            <span className="btn">Loading rows...</span>
+          {this.props.isFetching ?
+            <span className="btn">Loading rows...</span> :
+            <span className="btn"> {row} of {maxRow}</span>
           }
           </div>
           <div className="btn-group">
@@ -155,6 +156,7 @@ function mapStateToProps(state) {
     currentPage: state.currentTable.page,
     order: state.currentTable.order,
     items: state.currentTable.items,
+    isFetching: state.currentTable.isFetching,
     titleTable: state.currentTable.titleTable
   };
 }
