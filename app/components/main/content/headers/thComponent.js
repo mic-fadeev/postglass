@@ -22,8 +22,8 @@ class ThComponent extends Component {
   render() {
     const { fieldName, sortClass, } = this.props;
     return (
-      <th {...this.props} style={{ cursor: 'pointer' }} onClick={ this.onClickSort }>
-        <div className="table-header">
+      <th {...this.props} style={{ cursor: 'pointer' }} onClick={ this.onClickSort } id={fieldName}>
+        <div className="table-header" id={fieldName + 1}>
           <span>{fieldName}</span>
           <span className="pull-right" style={{ position: 'fixed' }}>
             <i className={sortClass}></i>

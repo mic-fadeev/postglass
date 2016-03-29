@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import SpinnerComponent from '../../base/spinner/component';
 import PaginationComponent from './paginate/component';
 import HeadersComponent from './headers/component';
+import FilterComponent from './headers/filterComponent';
 
 import * as CurrentTableActions from '../../../actions/currentTable';
 import * as TablesActions from '../../../actions/tables';
@@ -18,6 +19,7 @@ const propTypes = {
   getTableContent: React.PropTypes.func.isRequired,
   isFetching: React.PropTypes.bool.isRequired,
   titleTable: React.PropTypes.array.isRequired,
+  toShowFilter: React.PropTypes.bool.isRequired,
 };
 
 
@@ -48,8 +50,9 @@ class MainComponent extends Component {
     const { titleTable, items, isFetching } = this.props;
     return (
       <div className="gray-bg dashbard-1 mainContent" id="page-wrapper">
+        {this.props.toShowFilter ? <FilterComponent titleTable={this.props.titleTable} /> : null}
         <div id="table-wrapper">
-          <table className ="table table-bordered ">
+          <table className ="table table-bordered" id="table">
             <thead>
               <HeadersComponent titleTable = {titleTable} />
             </thead>
@@ -88,7 +91,8 @@ function mapStateToProps(state) {
     titleTable: state.currentTable.titleTable,
     items: state.currentTable.items,
     isFetching: state.currentTable.isFetching,
-    tables: state.tables
+    tables: state.tables,
+    toShowFilter: state.currentTable.toShowFilter,
   };
 }
 

@@ -6,7 +6,7 @@ import favorites from './favorites';
 const rootReducer = combineReducers({
   tables,
   currentTable,
-  favorites
+  favorites,
 });
 
 export default rootReducer;

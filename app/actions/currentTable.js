@@ -2,6 +2,7 @@ import DB from '../db';
 
 export const GET_TABLE_CONTENT = 'GET_TABLE_CONTENT';
 export const CONNECT = 'CONNECT';
+export const TOGGLE_FILTER = 'TOGGLE_FILTER';
 
 
 function returnContent(currentTable, isFetching, totalCount, order, page, titleTable) {
@@ -12,7 +13,14 @@ function returnContent(currentTable, isFetching, totalCount, order, page, titleT
     totalCount,
     order,
     page,
-    titleTable
+    titleTable,
+  };
+}
+
+export function toggleFilter(toShowFilter) {
+  return {
+    type: TOGGLE_FILTER,
+    toShowFilter
   };
 }
 

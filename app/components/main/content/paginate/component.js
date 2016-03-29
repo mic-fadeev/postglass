@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 
 import * as CurrentTableActions from '../../../../actions/currentTable';
 
-
 const propTypes = {
   order: React.PropTypes.array.isRequired,
   getTableContent: React.PropTypes.func.isRequired,
@@ -13,23 +12,22 @@ const propTypes = {
   currentPage: React.PropTypes.number.isRequired,
   items: React.PropTypes.array.isRequired,
   titleTable: React.PropTypes.array.isRequired,
+  toggleFilter: React.PropTypes.func.isRequired,
+  toShowFilter: React.PropTypes.bool,
 };
 
 
 class PaginationComponent extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      showModal: false,
-    };
     this.render = this.render.bind(this);
-    this.openModal = this.openModal.bind(this);
-    this.closeModal = this.closeModal.bind(this);
     this.prevPaginate = this.prevPaginate.bind(this);
     this.nextPaginate = this.nextPaginate.bind(this);
     this._paginate = this._paginate.bind(this);
     this._showPage = this._showPage.bind(this);
     this.showSearchPage = this.showSearchPage.bind(this);
+    this.showFilter = this.showFilter.bind(this);
+    this.handleKeyDown = this.handleKeyDown.bind(this);
   }
 
   getMaxPage() {
@@ -52,14 +50,15 @@ class PaginationComponent extends Component {
     this._paginate('next');
   }
 
-  openModal() {
-    this.setState({ showModal: true });
+  showFilter() {
+    this.props.toggleFilter(this.props.toShowFilter);
   }
 
-  closeModal() {
-    this.setState({ showModal: false });
+  handleKeyDown(event) {
+    if (event.ctrlKey && event.keyCode === 71) {
+      this.showFilter();
+    }
   }
-
 
   showSearchPage(event) {
     event.preventDefault();
@@ -116,6 +115,16 @@ class PaginationComponent extends Component {
             <span className="btn">Loading rows...</span>
           }
           </div>
+
+          <Button
+            bsStyle="default"
+            style={{ float: 'right' }}
+            onKeyDown={ this.handleKeyDown }
+            onClick={ this.showFilter }
+          >
+            Filter
+          </Button>
+
           <div className="btn-group">
             <button disabled={page === 1}
               onClick={this.prevPaginate}
@@ -125,12 +134,12 @@ class PaginationComponent extends Component {
             </button>
           <OverlayTrigger trigger="click"
             placement="top"
-            overlay={<Popover id="popover"><form onSubmit={this.showSearchPage}>
+            overlay={ <Popover id="popover"><form onSubmit={this.showSearchPage}>
                 <input type="text"
                   ref="pageForm"
                 />
               </form>
-              </Popover>}
+              </Popover> }
           >
           <Button bsStyle="default">
             Page {page} of {maxPage}</Button>
@@ -155,7 +164,8 @@ function mapStateToProps(state) {
     currentPage: state.currentTable.page,
     order: state.currentTable.order,
     items: state.currentTable.items,
-    titleTable: state.currentTable.titleTable
+    titleTable: state.currentTable.titleTable,
+    toShowFilter: state.currentTable.toShowFilter,
   };
 }
 

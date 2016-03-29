@@ -1,4 +1,4 @@
-import { GET_TABLE_CONTENT, CONNECT } from '../actions/currentTable';
+import { TOGGLE_FILTER, GET_TABLE_CONTENT, CONNECT } from '../actions/currentTable';
 
 
 export default function currentTable(currentTableDefault = {
@@ -8,7 +8,8 @@ export default function currentTable(currentTableDefault = {
   isFetching: true,
   totalCount: 0,
   order: [],
-  page: 1
+  page: 1,
+  toShowFilter: false,
 }, action) {
   switch (action.type) {
     case GET_TABLE_CONTENT:
@@ -19,7 +20,13 @@ export default function currentTable(currentTableDefault = {
         totalCount: action.totalCount !== undefined ? action.totalCount : currentTableDefault.totalCount, // eslint-disable-line
         order: action.order,
         page: action.page !== undefined ? action.page : currentTableDefault.page,
-        titleTable: action.titleTable || currentTableDefault.titleTable
+        titleTable: action.titleTable || currentTableDefault.titleTable,
+        toShowFilter: currentTableDefault.toShowFilter,
+      };
+    case TOGGLE_FILTER:
+      return {
+        ...currentTableDefault,
+        toShowFilter: !action.toShowFilter,
       };
     case CONNECT:
       return Object.assign({}, currentTableDefault, { isConnected: action.connect });
