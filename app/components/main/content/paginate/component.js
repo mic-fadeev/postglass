@@ -5,29 +5,29 @@ import { connect } from 'react-redux';
 
 import * as CurrentTableActions from '../../../../actions/currentTable';
 
-
 const propTypes = {
   order: React.PropTypes.array.isRequired,
   getTableContent: React.PropTypes.func.isRequired,
+  changeMode: React.PropTypes.func.isRequired,
   totalCount: React.PropTypes.number.isRequired,
   currentPage: React.PropTypes.number.isRequired,
   items: React.PropTypes.array.isRequired,
   isFetching: React.PropTypes.bool.isRequired,
   titleTable: React.PropTypes.array.isRequired,
+  isContent: React.PropTypes.bool.isRequired,
 };
 
 
 class PaginationComponent extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      showModal: false,
-    };
     this.render = this.render.bind(this);
-    this.openModal = this.openModal.bind(this);
-    this.closeModal = this.closeModal.bind(this);
+
     this.prevPaginate = this.prevPaginate.bind(this);
     this.nextPaginate = this.nextPaginate.bind(this);
+    this.showContent = this.showContent.bind(this);
+    this.showStructure = this.showStructure.bind(this);
+    this._switchStructure = this._switchStructure.bind(this);
     this._paginate = this._paginate.bind(this);
     this._showPage = this._showPage.bind(this);
     this.showSearchPage = this.showSearchPage.bind(this);
@@ -53,19 +53,29 @@ class PaginationComponent extends Component {
     this._paginate('next');
   }
 
-  openModal() {
-    this.setState({ showModal: true });
-  }
-
-  closeModal() {
-    this.setState({ showModal: false });
-  }
-
 
   showSearchPage(event) {
     event.preventDefault();
     this._showPage(this.refs.pageForm.value);
   }
+
+  showContent() {
+    this._switchStructure('content');
+  }
+
+  showStructure() {
+    this._switchStructure('structure');
+  }
+
+  _switchStructure(view) {
+    let stay = this.props.isContent;
+    if (view === 'content') stay = true;
+    if (view === 'structure') stay = false;
+    const params = stay;
+    this.props.changeMode(params);
+    document.getElementById('wrapper').scrollTop = 0;
+  }
+
 
   _paginate(side) {
     const currentTable = window.localStorage.currentTable;
@@ -78,7 +88,7 @@ class PaginationComponent extends Component {
         page,
         order: this.props.order,
         tableName: currentTable,
-        titleTable: this.props.titleTable
+        titleTable: this.props.titleTable,
       };
       this.props.getTableContent(params);
       document.getElementById('wrapper').scrollTop = 0;
@@ -93,7 +103,6 @@ class PaginationComponent extends Component {
         page: Number(number),
         order: this.props.order,
         tableName: currentTable,
-        titleTable: this.props.titleTable
       };
       this.props.getTableContent(params);
       document.getElementById('wrapper').scrollTop = 0;
@@ -111,13 +120,25 @@ class PaginationComponent extends Component {
       <div className="searchPage">
         </div>
           <div className="footer fixed">
-          <div className="currentRow">
-          {this.props.isFetching ?
-            <span className="btn">Loading rows...</span> :
-            <span className="btn"> {row} of {maxRow}</span>
-          }
-          </div>
-          <div className="btn-group">
+            <div className="currentRow">
+              {this.props.isFetching ?
+                <span className="btn">Loading rows...</span> :
+                <span className="btn"> {row} of {maxRow}</span>
+              }
+              </div>
+            <div className="btn-group">
+            <button
+              onClick={this.showContent}
+              className="btn btn-link"
+            >
+            Content
+            </button>
+            <button
+              onClick={this.showStructure}
+              className="btn btn-link"
+            >
+            Structure
+            </button>
             <button disabled={page === 1}
               onClick={this.prevPaginate}
               className="btn btn-link"
@@ -128,8 +149,13 @@ class PaginationComponent extends Component {
             placement="top"
             overlay={<Popover id="popover"><form onSubmit={this.showSearchPage}>
                 <input type="text"
+                  size="8"
+                  placeholder={page}
                   ref="pageForm"
                 />
+                <button className="btn btn-link">
+              Go
+              </button>
               </form>
               </Popover>}
           >
@@ -157,7 +183,8 @@ function mapStateToProps(state) {
     order: state.currentTable.order,
     items: state.currentTable.items,
     isFetching: state.currentTable.isFetching,
-    titleTable: state.currentTable.titleTable
+    titleTable: state.currentTable.titleTable,
+    isContent: state.currentTable.isContent,
   };
 }
 
