@@ -29,6 +29,9 @@ node_modules
 # OSX
 .DS_Store
 
+# IDEA files
+.idea
+
 # App packaged
 dist
 release
