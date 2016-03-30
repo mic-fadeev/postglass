@@ -50,7 +50,7 @@ class MainComponent extends Component {
     const { titleTable, items, isFetching } = this.props;
     return (
       <div className="gray-bg dashbard-1 mainContent" id="page-wrapper">
-        {this.props.toShowFilter ? <FilterComponent titleTable={this.props.titleTable} /> : null}
+        {this.props.toShowFilter ? <FilterComponent  /> : null}
         <div id="table-wrapper">
           <table className ="table table-bordered" id="table">
             <thead>

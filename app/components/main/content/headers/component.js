@@ -14,9 +14,8 @@ const propTypes = {
   getTableContent: React.PropTypes.func.isRequired,
   currentPage: React.PropTypes.number.isRequired,
   order: React.PropTypes.array.isRequired,
-  titleTable: React.PropTypes.array.isRequired
+  titleTable: React.PropTypes.array.isRequired,
 };
-
 
 class HeadersComponent extends Component {
   constructor(props) {

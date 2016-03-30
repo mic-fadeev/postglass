@@ -33,6 +33,7 @@ class SidebarComponent extends Component {
                  <SidebarItemComponent item={item} key={key}
                    setCurrentTable={this.props.setCurrentTable}
                    getTableContent={this.props.getTableContent}
+                   clearFilter={this.props.clearFilter}
                    className={item.isCurrent && 'active'}
                  />
                 )

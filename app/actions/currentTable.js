@@ -3,9 +3,12 @@ import DB from '../db';
 export const GET_TABLE_CONTENT = 'GET_TABLE_CONTENT';
 export const CONNECT = 'CONNECT';
 export const TOGGLE_FILTER = 'TOGGLE_FILTER';
+export const APPLY_FILTER = 'APPLY_FILTER';
+export const CLEAR_FILTER = 'CLEAR_FILTER';
+export const HANDLE_FILTER_INPUT = 'HANDLE_FILTER_INPUT';
 
 
-function returnContent(currentTable, isFetching, totalCount, order, page, titleTable) {
+function returnContent(currentTable, isFetching, totalCount, order, page, titleTable, columnTypes) {
   return {
     type: GET_TABLE_CONTENT,
     currentTable,
@@ -14,6 +17,7 @@ function returnContent(currentTable, isFetching, totalCount, order, page, titleT
     order,
     page,
     titleTable,
+    columnTypes,
   };
 }
 
@@ -24,11 +28,35 @@ export function toggleFilter(toShowFilter) {
   };
 }
 
+export function applyFilter(isFilterApplied, filterCategory, filterAction, filterText) {
+  return {
+    type: APPLY_FILTER,
+    isFilterApplied,
+    filterCategory,
+    filterAction,
+    filterText,
+  };
+}
+
+export function clearFilter(isFilterApplied) {
+  return {
+    type: CLEAR_FILTER,
+    isFilterApplied
+  };
+}
+
+export function handleFilterInput(text) {
+  return {
+    type: HANDLE_FILTER_INPUT,
+    text
+  };
+}
+
 export function getTableContent(params = { page: 1, order: [] }) {
   return dispatch => {
     dispatch(returnContent(undefined, true, undefined, undefined, params.page));
-    DB.getTableContent(params, (data, totalCount, order, page, titleTable) => {
-      dispatch(returnContent(fixTempIssue(data), false, totalCount, order, page, titleTable));
+    DB.getTableContent(params, (data, totalCount, order, page, titleTable, columnTypes) => {
+      dispatch(returnContent(fixTempIssue(data), false, totalCount, order, page, titleTable, columnTypes));
     });
   };
 }

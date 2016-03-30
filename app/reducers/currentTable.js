@@ -1,4 +1,4 @@
-import { TOGGLE_FILTER, GET_TABLE_CONTENT, CONNECT } from '../actions/currentTable';
+import { HANDLE_FILTER_INPUT, TOGGLE_FILTER, APPLY_FILTER, CLEAR_FILTER, GET_TABLE_CONTENT, CONNECT } from '../actions/currentTable';
 
 
 export default function currentTable(currentTableDefault = {
@@ -10,6 +10,12 @@ export default function currentTable(currentTableDefault = {
   order: [],
   page: 1,
   toShowFilter: false,
+  columnTypes: [],
+  isFilterApplied: false,
+  filterCategory: '',
+  filterAction: '=',
+  filterInput: '',
+  filterText: '',
 }, action) {
   switch (action.type) {
     case GET_TABLE_CONTENT:
@@ -22,11 +28,30 @@ export default function currentTable(currentTableDefault = {
         page: action.page !== undefined ? action.page : currentTableDefault.page,
         titleTable: action.titleTable || currentTableDefault.titleTable,
         toShowFilter: currentTableDefault.toShowFilter,
+        columnTypes: action.columnTypes,
+        isFilterApplied: currentTableDefault.isFilterApplied,
+        filterCategory: currentTableDefault.filterCategory,
+        filterAction: currentTableDefault.filterAction,
+        filterInput: currentTableDefault.filterInput,
+        filterText: currentTableDefault.filterText,
       };
     case TOGGLE_FILTER:
       return {
         ...currentTableDefault,
-        toShowFilter: !action.toShowFilter,
+        toShowFilter: !currentTableDefault.toShowFilter,
+      };
+    case APPLY_FILTER:
+      return {
+        ...currentTableDefault,
+        isFilterApplied: true,
+        filterCategory: action.filterCategory,
+        filterAction: action.filterAction,
+        filterText: action.filterText,
+      };
+    case CLEAR_FILTER: 
+      return {
+        ...currentTableDefault,
+        isFilterApplied: false,
       };
     case CONNECT:
       return Object.assign({}, currentTableDefault, { isConnected: action.connect });

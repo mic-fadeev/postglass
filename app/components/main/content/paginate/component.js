@@ -13,7 +13,7 @@ const propTypes = {
   items: React.PropTypes.array.isRequired,
   titleTable: React.PropTypes.array.isRequired,
   toggleFilter: React.PropTypes.func.isRequired,
-  toShowFilter: React.PropTypes.bool,
+  toShowFilter: React.PropTypes.bool.isRequired,
 };
 
 
@@ -51,7 +51,7 @@ class PaginationComponent extends Component {
   }
 
   showFilter() {
-    this.props.toggleFilter(this.props.toShowFilter);
+    this.props.toggleFilter(!this.props.toShowFilter);
   }
 
   handleKeyDown(event) {
@@ -134,14 +134,14 @@ class PaginationComponent extends Component {
             </button>
           <OverlayTrigger trigger="click"
             placement="top"
-            overlay={ <Popover id="popover"><form onSubmit={this.showSearchPage}>
-                <input type="text"
-                  ref="pageForm"
-                />
-              </form>
+            overlay={ 
+              <Popover id="popover">
+                <form onSubmit={this.showSearchPage}>
+                  <input type="text" ref="pageForm" />
+                </form>
               </Popover> }
           >
-          <Button bsStyle="default">
+           <Button bsStyle="default">
             Page {page} of {maxPage}</Button>
           </OverlayTrigger>
             <button disabled={page === maxPage}

@@ -119,17 +119,23 @@
 
 #filter-wrapper {
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
   position: fixed;
   top: 0px;
   left: 220px;
-  height: 100px;
   width: calc(~"100vw - 220px");
   background-color: white;
   z-index: 99;
+  padding: 20px;
+  border: 1px solid rgba(0,0,0,0.2);
 }
 
 .ibox-content {
   overflow: auto;
   height: 95vh;
+}
+
+.bootstrap-elements {
+  border-radius: 0px;
+  height: 45px;
 }

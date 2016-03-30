@@ -15,6 +15,7 @@ class SidebarItemComponent extends Component {
 
   showTable() {
     this.props.setCurrentTable(this.props.item.table_name);
+    this.props.clearFilter(false);
     this.props.getTableContent({ tableName: this.props.item.table_name });
     document.getElementById('wrapper').scrollTop = 0;
   }

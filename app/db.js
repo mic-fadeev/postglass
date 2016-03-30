@@ -91,11 +91,12 @@ export default class DB {
       this.client.query(query, (error, res) => {
         if (!offset) {
           const titleQuery = `
-              SELECT column_name FROM information_schema.columns
-              WHERE table_name='${params.tableName}';`;
+            SELECT column_name, data_type FROM information_schema.columns
+            WHERE table_name='${params.tableName}';`;
           this.client.query(titleQuery, (titleError, resTitle) => {
             const titleTable = resTitle.rows.map(key => key.column_name);
-            callback.apply(null, [fixTempIssue(res.rows), totalCount, order, page, titleTable]);
+            const columnTypes = resTitle.rows.map(key => key.data_type);
+            callback.apply(null, [fixTempIssue(res.rows), totalCount, order, page, titleTable, columnTypes]);
           });
         } else {
           callback.apply(null, [fixTempIssue(res.rows), totalCount, order, page]);
