@@ -3,99 +3,99 @@
   margin: 15px 0;
   background: #fff;
 }
-
+ 
 .modal-open .select2-container {
   z-index: 999999;
 }
-
-
-
+ 
+ 
+ 
 .mainContent{
   padding: 0px !important;
 }
-
-
-
+ 
+ 
+ 
 .table  {
   position: relative !important;
   height: 100% !important;
   margin-bottom: 50px;
 }
-
+ 
 .headerTable {
   display: block;
   width: 500px;
   overflow: auto;
 }
-
-
-
+ 
+ 
+ 
 .empty-box {
   max-width: 400px;
   z-index: 100;
   margin: 0 auto;
   margin-top: 140px;
-
+ 
   &.no-top {
     margin-top: 0;
   }
 }
-
+ 
 .clear-both  {
   clear: both;
 }
-
-
+ 
+ 
 /*paggination*/
-
+ 
 .modal{
-
+ 
 }
-
-
+ 
+ 
 .pagination-fixed {
   position: fixed;
   height: 0px;
 }
-
+ 
 .btn-group{
   float: right;
 }
-
-
+ 
+ 
 .currentRow{
  float: left;
 }
-
-
+ 
+ 
 .scrollable {
   height: 100%;
   overflow: auto;
 }
-
+ 
 .max-height {
   max-height: 100%;
   overflow: hidden;
 }
-
+ 
 .no-overflow {
   overflow: hidden;
 }
-
+ 
 .table-header {
   position: fixed;
   width: 100%;
-  max-width: inherit; 
+  max-width: inherit;
   padding: 8px;
   margin: -9px;
   background-color: rgb(245, 245, 246);  
   border: 1px solid rgb(221,221,221);
 }
-
+ 
 .fa-sort {
   display: none;
 }
-
+ 
 .fetching-container {
   position: fixed;
   top: 36px;
@@ -104,15 +104,32 @@
   height: calc(~"100% - 91px");
   width: 100%;
 }
-
+ 
 .fetching-animation {
   position: absolute;
   top: calc(~"50% - 36px");
   left: calc(~"50% - 110px");
   transform: translate(-50%, -50%);
 }
-
-#table-wrapper {
+ 
+.table-wrapper {
   max-height: calc(~"100vh - 55px");
   overflow: auto;
+}
+                                                                                                      
+#filter-wrapper {
+  display: flex;
+  justify-content: space-around;
+  position: fixed;
+  top: 0px;
+  left: 220px;
+  height: 100px;
+  width: calc(~"100vw - 220px");
+  background-color: white;
+  z-index: 99;
+}
+ 
+.ibox-content {
+  overflow: auto;
+  height: 95vh;
 }

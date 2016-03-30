@@ -90,25 +90,17 @@ export default class DB {
       `;
       this.client.query(query, (error, res) => {
         if (!offset) {
-          const titleQuery = `
-              SELECT column_name FROM information_schema.columns
-              WHERE table_name='${params.tableName}';`;
           const structureQuery = `
               SELECT COLUMN_NAME AS ColumnName, DATA_TYPE AS DataType,
               CHARACTER_MAXIMUM_LENGTH AS CharacterLength
               FROM INFORMATION_SCHEMA.COLUMNS
               WHERE TABLE_NAME = '${params.tableName}';`;
-          this.client.query(titleQuery, (titleError, resTitle) => {
+          this.client.query(structureQuery, (titleError, resStructure) => {
             this.handleError(titleError);
-            this.client.query(structureQuery, (structureError, resStructure) => {
-              this.handleError(structureError);
-              const structureTable = resStructure.rows;
-              callback.apply(null, [
-                fixTempIssue(res.rows), totalCount, order, page, titleTable, structureTable
-              ]);
-            });
-            const titleTable = resTitle.rows.map(key => key.column_name);
-            callback.apply(null, [fixTempIssue(res.rows), totalCount, order, page, titleTable]);
+            const structureTable = resStructure.rows;
+            const titleTable = resStructure.rows.map(key => key.columnname);
+            callback.apply(null, [fixTempIssue(res.rows), totalCount, order,
+              page, titleTable, structureTable]);
           });
         } else {
           callback.apply(null, [fixTempIssue(res.rows), totalCount, order, page]);

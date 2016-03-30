@@ -96,9 +96,11 @@ class PaginationComponent extends Component {
   }
 
   _showPage(number) {
+    const close = this.refs.trigger;
+    close.hide();
     const currentTable = window.localStorage.currentTable;
     const maxPage = this.getMaxPage();
-    if (number <= maxPage) {
+    if (number <= maxPage && number > 0) {
       const params = {
         page: Number(number),
         order: this.props.order,
@@ -128,14 +130,15 @@ class PaginationComponent extends Component {
               </div>
             <div className="btn-group">
             <button
+
               onClick={this.showContent}
-              className="btn btn-link"
+              className={this.props.isContent ? 'btn btn-empty' : 'btn btn-link'}
             >
             Content
             </button>
             <button
               onClick={this.showStructure}
-              className="btn btn-link"
+              className={this.props.isContent ? 'btn btn-link' : 'btn btn-empty'}
             >
             Structure
             </button>
@@ -145,10 +148,15 @@ class PaginationComponent extends Component {
             >
               <i className="fa fa-chevron-left"></i>
             </button>
-          <OverlayTrigger trigger="click"
+          <OverlayTrigger
+            ref="trigger"
+            disabled={maxPage < 2}
+            trigger="click"
+            rootClose={true}
             placement="top"
             overlay={<Popover id="popover"><form onSubmit={this.showSearchPage}>
-                <input type="text"
+                <input
+                  type="text"
                   size="8"
                   placeholder={page}
                   ref="pageForm"
@@ -159,7 +167,9 @@ class PaginationComponent extends Component {
               </form>
               </Popover>}
           >
-          <Button bsStyle="default">
+          <Button bsStyle="default"
+            disabled={page === maxPage}
+          >
             Page {page} of {maxPage}</Button>
           </OverlayTrigger>
             <button disabled={page === maxPage}

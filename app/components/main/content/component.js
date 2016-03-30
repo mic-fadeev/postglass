@@ -18,11 +18,13 @@ const propTypes = {
 
 const MainComponent = (props) =>
    <div className="gray-bg dashbard-1 mainContent" id="page-wrapper">
+    <div className="table-wrapper">
     {props.isContent ?
       <ContentComponent /> :
       <StructureComponent />
     }
     <PaginationComponent />
+    </div>
   </div>;
 
 
