@@ -24,11 +24,15 @@ const propTypes = {
 class FilterComponent extends Component {
   constructor(props) {
     super(props);
+    this.clearFilter = this.clearFilter.bind(this);
+    this.applyFilter = this.applyFilter.bind(this);
+    this.formActionList = this.formActionList.bind(this);
     this.state = {
       category: this.props.titleTable[0],
       categoryId: 0,
       action: 'action',
-      input: ''
+      input: '',
+      currentActionsList: [],
     }
   }
 
@@ -37,6 +41,7 @@ class FilterComponent extends Component {
       category: this.props.titleTable[eventKey],
       categoryId: eventKey,
     })
+    // this.formActionList(); doesnt work for some reason
   }
 
   changeAction = (event, eventKey) => {
@@ -62,54 +67,101 @@ class FilterComponent extends Component {
     this.props.clearFilter(false);
   }
 
-  render() {
-/*    var actionsList = [];
+  handleKeyDown = (event) => {
+    if (event.keyCode == 13) {
+      //this.applyFilter(); same here
+    }
+  }
+
+  formActionList = () => {
+    var actionsList = [];
     switch(this.props.columnTypes[this.state.categoryId]) {
       case 'text':
       case 'string':
       case 'character varying':
-        actionsList.concat(stringActions.slice(), 'divider');
+        actionsList.concat(stringActions, 'divider');
         break;
       case 'integer':
       case 'real':
       case 'bigint':
-        actionsList.concat(numericActions.slice(), 'divider');
+        actionsList.concat(numericActions, 'divider');
         break;
       case 'boolean':
-        actionsList.concat(booleanActions.slice(), 'divider');
+        actionsList.concat(booleanActions, 'divider');
         break;
-    }*/
+      default:
+    }
+    this.setState({
+      currentActionsList: actionsList
+    })
+  }
+
+  render() { //temp real bydlo solution
     return (
       <div id="filter-wrapper">
-        <DropdownButton id="filterCategoryDropdown" title={this.state.category} bsSize="small" className="bootstrap-elements" onSelect={this.changeCategory}>
+        <DropdownButton 
+          dropup 
+          id="filterCategoryDropdown" 
+          title={this.state.category} 
+          bsSize="small" 
+          className="bootstrap-elements" 
+          onSelect={this.changeCategory}
+        >
           {this.props.titleTable.map( function( title, id ){
             return (
               <MenuItem key={id} id={id} eventKey={id}>{title}</MenuItem>
             );
           })}
         </DropdownButton>
-        <DropdownButton id="filterActionDropdown" title={this.state.action} bsSize="small" className="bootstrap-elements" onSelect={this.changeAction}>
+        <DropdownButton 
+          dropup 
+          id="filterActionDropdown" 
+          title={this.state.action} 
+          bsSize="small" 
+          className="bootstrap-elements" 
+          onSelect={this.changeAction}
+        >
         
-          {numericActions.map( function (action, id ){
-            return (
-              <MenuItem key={id} id={id} eventKey={action}>{action}</MenuItem>
-            );
-          })}
-          <MenuItem divider />
+          {this.props.columnTypes[this.state.categoryId] == 'character varying' || 
+           this.props.columnTypes[this.state.categoryId] == 'text' ||
+           this.props.columnTypes[this.state.categoryId] == 'string' ?
+            stringActions.map( function (action, id ) {
+              return (
+                <MenuItem key={id} id={id} eventKey={action}>{action}</MenuItem>
+              );
+            })
+          : null}
+          {this.props.columnTypes[this.state.categoryId] == 'character varying' || 
+           this.props.columnTypes[this.state.categoryId] == 'text' ||
+           this.props.columnTypes[this.state.categoryId] == 'string' ?
+            <MenuItem divider />
+          : null}
 
-          {stringActions.map( function (action, id ){
-            return (
-              <MenuItem key={id} id={id} eventKey={action}>{action}</MenuItem>
-            );
-          })}
-          <MenuItem divider />
+          {this.props.columnTypes[this.state.categoryId] == 'integer' || 
+           this.props.columnTypes[this.state.categoryId] == 'real' ||
+           this.props.columnTypes[this.state.categoryId] == 'bigint' ?
+            numericActions.map( function (action, id ) {
+              return (
+                <MenuItem key={id} id={id} eventKey={action}>{action}</MenuItem>
+              );
+            })
+          : null}
+          {this.props.columnTypes[this.state.categoryId] == 'integer' || 
+           this.props.columnTypes[this.state.categoryId] == 'real' ||
+           this.props.columnTypes[this.state.categoryId] == 'bigint' ?
+            <MenuItem divider />
+          : null}
 
-          {booleanActions.map( function (action, id ){
-            return (
-              <MenuItem key={id} id={id} eventKey={action}>{action}</MenuItem>
-            );
-          })}
-          <MenuItem divider />
+          {this.props.columnTypes[this.state.categoryId] == 'boolean' ?
+            booleanActions.map( function (action, id ) {
+              return (
+                <MenuItem key={id} id={id} eventKey={action}>{action}</MenuItem>
+              );
+            })
+          : null}
+          {this.props.columnTypes[this.state.categoryId] == 'boolean' ?
+            <MenuItem divider />
+          : null}
 
           {nullActions.map( function (action, id ){
             return (
@@ -125,6 +177,7 @@ class FilterComponent extends Component {
           style={{ minWidth: '50vh' }}
           className="bootstrap-elements"
           onChange={this.handleChange}
+          onKeyDown={this.handleKeyDown}
         />
         <Button 
           onClick={this.applyFilter}

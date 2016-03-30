@@ -51,6 +51,9 @@ class PaginationComponent extends Component {
   }
 
   showFilter() {
+    this.props.toShowFilter ? 
+    document.getElementById('table-wrapper').style.maxHeight = 'calc(100vh - 55px)' :
+    document.getElementById('table-wrapper').style.maxHeight = 'calc(100vh - 147px)';
     this.props.toggleFilter(!this.props.toShowFilter);
   }
 
