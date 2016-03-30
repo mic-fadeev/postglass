@@ -22,7 +22,6 @@ class SidebarComponent extends Component {
 
   render() {
     const { tables } = this.props;
-
     return (
       <nav className="navbar-default navbar-static-side scrollable">
         <div className="sidebar-collapse">
