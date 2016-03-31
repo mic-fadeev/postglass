@@ -27,7 +27,6 @@ const MainComponent = (props) =>
     </div>
   </div>;
 
-
 MainComponent.propTypes = propTypes;
 function mapStateToProps(state) {
   return {
