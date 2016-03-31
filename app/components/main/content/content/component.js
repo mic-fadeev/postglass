@@ -49,7 +49,7 @@ class ContentComponent extends Component {
       <div>
            { !isFetching &&
             <div>
-            <table className ="table table-bordered ">
+            <table className ="table table-bordered table-striped table-fixed">
               <thead>
                 <HeadersComponent titleTable = {titleTable} />
               </thead>
@@ -61,7 +61,7 @@ class ContentComponent extends Component {
                     for (const header of titleTable) {
                       keyA += 1;
                       fields.push(
-                        <td key={keyA}>{item[header]}</td>
+                        <td className="truncate" key={keyA}>{item[header]}</td>
                       );
                     }
                     return (
