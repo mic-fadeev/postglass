@@ -1,4 +1,5 @@
-import { HANDLE_FILTER_INPUT, TOGGLE_FILTER, APPLY_FILTER, CLEAR_FILTER, GET_TABLE_CONTENT, CONNECT } from '../actions/currentTable';
+import { TOGGLE_FILTER, APPLY_FILTER,
+  CLEAR_FILTER, GET_TABLE_CONTENT, CONNECT } from '../actions/currentTable';
 
 
 export default function currentTable(currentTableDefault = {
@@ -12,10 +13,9 @@ export default function currentTable(currentTableDefault = {
   toShowFilter: false,
   columnTypes: [],
   isFilterApplied: false,
-  filterCategory: '',
-  filterAction: '=',
-  filterInput: '',
-  filterText: '',
+  filterCategory: undefined,
+  filterAction: undefined,
+  filterText: undefined,
 }, action) {
   switch (action.type) {
     case GET_TABLE_CONTENT:
@@ -32,7 +32,6 @@ export default function currentTable(currentTableDefault = {
         isFilterApplied: currentTableDefault.isFilterApplied,
         filterCategory: currentTableDefault.filterCategory,
         filterAction: currentTableDefault.filterAction,
-        filterInput: currentTableDefault.filterInput,
         filterText: currentTableDefault.filterText,
       };
     case TOGGLE_FILTER:
@@ -48,7 +47,7 @@ export default function currentTable(currentTableDefault = {
         filterAction: action.filterAction,
         filterText: action.filterText,
       };
-    case CLEAR_FILTER: 
+    case CLEAR_FILTER:
       return {
         ...currentTableDefault,
         isFilterApplied: false,

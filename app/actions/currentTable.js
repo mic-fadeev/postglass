@@ -5,10 +5,10 @@ export const CONNECT = 'CONNECT';
 export const TOGGLE_FILTER = 'TOGGLE_FILTER';
 export const APPLY_FILTER = 'APPLY_FILTER';
 export const CLEAR_FILTER = 'CLEAR_FILTER';
-export const HANDLE_FILTER_INPUT = 'HANDLE_FILTER_INPUT';
 
 
-function returnContent(currentTable, isFetching, totalCount, order, page, titleTable, columnTypes) {
+function returnContent(currentTable, isFetching, totalCount, order, page, titleTable, columnTypes,
+                       isFilterApplied, filterCategory, filterAction, filterText) {
   return {
     type: GET_TABLE_CONTENT,
     currentTable,
@@ -18,6 +18,10 @@ function returnContent(currentTable, isFetching, totalCount, order, page, titleT
     page,
     titleTable,
     columnTypes,
+    isFilterApplied,
+    filterCategory,
+    filterAction,
+    filterText,
   };
 }
 
@@ -45,18 +49,11 @@ export function clearFilter(isFilterApplied) {
   };
 }
 
-export function handleFilterInput(text) {
-  return {
-    type: HANDLE_FILTER_INPUT,
-    text
-  };
-}
-
 export function getTableContent(params = { page: 1, order: [] }) {
   return dispatch => {
     dispatch(returnContent(undefined, true, undefined, undefined, params.page));
-    DB.getTableContent(params, (data, totalCount, order, page, titleTable, columnTypes) => {
-      dispatch(returnContent(fixTempIssue(data), false, totalCount, order, page, titleTable, columnTypes));
+    DB.getTableContent(params, (data, totalCount, order, page, titleTable, columnTypes, isFilterApplied, filterCategory, filterAction, filterText) => {
+      dispatch(returnContent(fixTempIssue(data), false, totalCount, order, page, titleTable, columnTypes, isFilterApplied, filterCategory, filterAction, filterText));
     });
   };
 }

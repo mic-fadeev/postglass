@@ -90,13 +90,20 @@ export default class DB {
       `;
       this.client.query(query, (error, res) => {
         if (!offset) {
-          const titleQuery = `
+          if (!params.isFilterApplied) {
+            var titleQuery = `
+              SELECT column_name, data_type FROM information_schema.columns
+              WHERE table_name='${params.tableName}';`;
+          } else {
+            var titleQuery = `
             SELECT column_name, data_type FROM information_schema.columns
-            WHERE table_name='${params.tableName}';`;
+            WHERE table_name='${params.tableName}'; AND
+            '${params.filterCategory}'; '${params.filterAction}'; '${params.filterText}';`;
+          }
           this.client.query(titleQuery, (titleError, resTitle) => {
             const titleTable = resTitle.rows.map(key => key.column_name);
             const columnTypes = resTitle.rows.map(key => key.data_type);
-            callback.apply(null, [fixTempIssue(res.rows), totalCount, order, page, titleTable, columnTypes]);
+            callback.apply(null, [fixTempIssue(res.rows), totalCount, order, page, titleTable, columnTypes, params.isFilterApplied, params.filterCategory, params.filterAction, params.filterText]);
           });
         } else {
           callback.apply(null, [fixTempIssue(res.rows), totalCount, order, page]);
