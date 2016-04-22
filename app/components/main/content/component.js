@@ -24,15 +24,6 @@ const propTypes = {
 
 
 class MainComponent extends Component {
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      test: 1
-    };
-    this.handleTableScroll = this.handleTableScroll.bind(this);
-  }
-
   componentWillReceiveProps(nextProps) {
     if (!this.props.tables.length && nextProps.tables.length) {
       let currentTable = window.localStorage.currentTable;
