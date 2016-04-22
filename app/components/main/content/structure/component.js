@@ -36,15 +36,16 @@ class StructureComponent extends Component {
     this.props.setCurrentTable(currentTable);
     this.props.getTableContent({ tableName: currentTable });
   }
+
   render() {
     const { structureTable, isFetching } = this.props;
     const titleStructure = ['columnname', 'datatype'];
 
     return (
       <div>
-           { !isFetching &&
-            <div>
-            <table className ="table table-bordered ">
+        { !isFetching &&
+          <div>
+            <table className ="table table-bordered">
               <thead>
                 <HeadersComponent titleTable = {titleStructure} />
               </thead>
@@ -69,12 +70,13 @@ class StructureComponent extends Component {
               </tbody>
             </table>
           </div>
-          }
+        }
         <SpinnerComponent isShow={isFetching} />
       </div>
-      );
+    );
   }
-  }
+}
+
 StructureComponent.propTypes = propTypes;
 function mapStateToProps(state) {
   return {

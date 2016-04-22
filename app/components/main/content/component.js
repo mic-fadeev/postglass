@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -16,16 +16,29 @@ const propTypes = {
 };
 
 
-const MainComponent = (props) =>
-   <div className="gray-bg dashbard-1 mainContent" id="page-wrapper">
-    <div className="table-wrapper">
-    {props.isContent ?
-      <ContentComponent /> :
-      <StructureComponent />
-    }
-    <PaginationComponent />
-    </div>
-  </div>;
+class MainComponent extends Component {
+  handleTableScroll() {
+    const tableHeaderList = document.querySelectorAll('.table-header');
+    const scrollSize = document.getElementById('table-wrapper').scrollLeft;
+    Object.keys(tableHeaderList).map((tableHeaderItem) => {
+      tableHeaderList[tableHeaderItem].style.marginLeft = -scrollSize - 9 + 'px';
+    });
+  }
+
+  render() {
+    return (
+      <div className="gray-bg dashbard-1 mainContent" id="page-wrapper">
+        <div id="table-wrapper" onScroll={this.handleTableScroll}>
+          {this.props.isContent ?
+            <ContentComponent /> :
+            <StructureComponent />
+          }
+          <PaginationComponent />
+        </div>
+      </div>
+    );
+  }
+}
 
 
 MainComponent.propTypes = propTypes;
