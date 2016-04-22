@@ -24,6 +24,15 @@ const propTypes = {
 
 
 class MainComponent extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      test: 1
+    };
+    this.handleTableScroll = this.handleTableScroll.bind(this);
+  }
+
   componentWillReceiveProps(nextProps) {
     if (!this.props.tables.length && nextProps.tables.length) {
       let currentTable = window.localStorage.currentTable;
@@ -46,12 +55,20 @@ class MainComponent extends Component {
     }
   }
 
+  handleTableScroll() {
+    const tableHeaderList = document.querySelectorAll('.table-header');
+    const scrollSize = document.getElementById('table-wrapper').scrollLeft;
+    Object.keys(tableHeaderList).map((tableHeaderItem) => {
+      tableHeaderList[tableHeaderItem].style.marginLeft = -scrollSize - 9 + 'px';
+    });
+  }
+
   render() {
     const { titleTable, items, isFetching } = this.props;
     return (
       <div className="gray-bg dashbard-1 mainContent" id="page-wrapper">
-        {this.props.toShowFilter ? <FilterComponent  /> : null}
-        <div id="table-wrapper">
+        {this.props.toShowFilter ? <FilterComponent /> : null}
+        <div id="table-wrapper" onScroll={this.handleTableScroll}>
           <table className ="table table-bordered" id="table">
             <thead>
               <HeadersComponent titleTable = {titleTable} />
