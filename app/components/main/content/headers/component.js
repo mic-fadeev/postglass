@@ -71,7 +71,7 @@ class HeadersComponent extends Component {
         />
       );
     }
-    return <tr id="fixedTableHeader">{headers}</tr>;
+    return <tr>{headers}</tr>;
   }
 }
 

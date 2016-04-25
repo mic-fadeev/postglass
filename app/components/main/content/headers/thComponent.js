@@ -12,6 +12,7 @@ class ThComponent extends Component {
   constructor(props) {
     super(props);
     this.onClickSort = this.onClickSort.bind(this);
+    this.getStyle = this.getStyle.bind(this);
   }
 
   onClickSort(ev) {
@@ -19,10 +20,18 @@ class ThComponent extends Component {
     this.props.onClickSort(this.props.fieldName, icon);
   }
 
+  getStyle(item) {
+    let length = item.length * 10;
+    if (length < 100) {
+      length = 100;
+    }
+    return { cursor: 'pointer', width: length };
+  }
+
   render() {
     const { fieldName, sortClass, } = this.props;
     return (
-      <th {...this.props} style={{ cursor: 'pointer' }} onClick={ this.onClickSort }>
+      <th {...this.props} style={this.getStyle(fieldName)} onClick={ this.onClickSort }>
         <div className="table-header">
           <span>{fieldName}</span>
           <span className="pull-right" style={{ position: 'fixed' }}>
