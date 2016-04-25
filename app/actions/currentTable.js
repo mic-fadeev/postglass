@@ -39,17 +39,9 @@ export function changeMode(isContent) {
 }
 
 export function connectDB(params) {
-  return dispatch => {
+  return (dispatch) => {
     DB.connect(params, (connect, err) => {
-      /*eslint-disable */
-      dispatch((() => {
-        return {
-          type: CONNECT,
-          connect,
-          err
-        };
-      })());
-      /*eslint-enable */
+      dispatch({ type: CONNECT, connect, err });
     });
   };
 }

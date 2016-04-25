@@ -33,14 +33,7 @@ export function setCurrent(favorites, currentId) {
     }
     return storage.set('postglass_favorites', favorites, (error) => {
       if (error) throw error;
-      /*eslint-disable */
-      return dispatch((() => {
-        return {
-          type: SET_CURRENT_FAVORIT,
-          favorites
-        };
-      })());
-      /*eslint-enable */
+      return dispatch({ type: SET_CURRENT_FAVORIT, favorites });
     });
   };
 }
@@ -49,13 +42,6 @@ export function getFavorites() {
   return dispatch =>
     storage.get('postglass_favorites', (error, data) => {
       if (error) throw error;
-      /*eslint-disable */
-      return dispatch((() => {
-        return {
-          type: GET_FAVORITES,
-          favorites: Object.keys(data).length ? data : []
-        };
-      })());
-      /*eslint-enable */
+      return dispatch({ type: GET_FAVORITES, favorites: Object.keys(data).length ? data : [] });
     });
 }

@@ -61,7 +61,7 @@ class ContentComponent extends Component {
                     for (const header of titleTable) {
                       keyA += 1;
                       fields.push(
-                        <td className="truncate" key={keyA}>{item[header]}</td>
+                        <td className="truncate" key={keyA}>{item[header].toString()}</td>
                       );
                     }
                     return (

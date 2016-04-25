@@ -14,15 +14,7 @@ export function setCurrentTable(tableName) {
 export function getTables() {
   return dispatch => {
     DB.getTables((tables, err) => {
-      /*eslint-disable */
-      dispatch((() => {
-        return {
-          type: GET_TABLES,
-          tables,
-          err
-        };
-      })());
-      /*eslint-enable */
+      dispatch({ type: GET_TABLES, tables, err });
     });
   };
 }
