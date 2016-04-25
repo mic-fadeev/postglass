@@ -1,7 +1,7 @@
 const ipcRenderer = require('electron').ipcRenderer;
 const pg = require('remote').require('pg');
-
-
+const jwt = require('jwt-simple');
+const keys = '123';
 // https://github.com/atom/electron/issues/4490
 function fixTempIssue(data) {
   for (const field of data) {
@@ -17,16 +17,23 @@ function fixTempIssue(data) {
 
 export default class DB {
   static connect(params, callback) {
+    var connectParams = params;
+    if (params.isCurrent) {
+      connectParams.password = jwt.decode(params.password, keys);
+      if (params.useSSH) {
+        connectParams.sshPassword = jwt.decode(params.sshPassword, keys);
+      }
+    }
     if (params.useSSH) {
-      ipcRenderer.send('ssh-connect', params);
+      ipcRenderer.send('ssh-connect', connectParams);
       ipcRenderer.once('ssh-connect', (success) => {
         if (success) {
-          const connectUrl = `postgres://${params.user}:${params.password}@${params.address}:5433/${params.database}`;
+          const connectUrl = `postgres://${connectParams.user}:${connectParams.password}@${connectParams.address}:5433/${connectParams.database}`;
           this.connectDB(connectUrl, callback);
         }
       });
     } else {
-      const connectUrl = `postgres://${params.user}:${params.password}@${params.address}:${params.port}/${params.database}`;
+      const connectUrl = `postgres://${connectParams.user}:${connectParams.password}@${connectParams.address}:${connectParams.port}/${connectParams.database}`;
       this.connectDB(connectUrl, callback);
     }
   }

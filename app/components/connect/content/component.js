@@ -103,7 +103,6 @@ class ContentConnectComponent extends Component {
     const favorites = this.props.favorites;
     let favorit = null;
     const currentFavorit = Object.assign({}, this.state.currentFavorit, this.getValidatorData());
-
     this.setState({ currentFavorit });
     const onValidate = (error) => {
       if (!error) {
