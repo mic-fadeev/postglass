@@ -109,7 +109,8 @@
     "react-validation-mixin": "^5.3.4",
     "redux": "^3.3.1",
     "redux-promise": "^0.5.1",
-    "redux-thunk": "^1.0.3"
+    "redux-thunk": "^1.0.3",
+    "universal-storage": "0.0.4"
   },
   "devEngines": {
     "node": "4.x || 5.x",
