@@ -1,7 +1,6 @@
 const ipcRenderer = require('electron').ipcRenderer;
 const pg = require('remote').require('pg');
 
-
 // https://github.com/atom/electron/issues/4490
 function fixTempIssue(data) {
   for (const field of data) {
@@ -57,7 +56,17 @@ export default class DB {
     `;
     this.client.query(query, (err, result) => {
       this.handleError(err);
-      callback.apply(null, [result.rows, err]);
+      const tables = result.rows;
+      tables.sort((a, b) => {
+        if (a.table_name > b.table_name) {
+          return 1;
+        }
+        if (b.table_name > a.table_name) {
+          return -1;
+        }
+        return 0;
+      });
+      callback.apply(null, [tables, err]);
     });
   }
 
@@ -99,6 +108,9 @@ export default class DB {
             this.handleError(titleError);
             const structureTable = resStructure.rows;
             const titleTable = resStructure.rows.map(key => key.columnname);
+            const id = titleTable.shift();
+            titleTable.sort();
+            titleTable.unshift(id);
             callback.apply(null, [fixTempIssue(res.rows), totalCount, order,
               page, titleTable, structureTable]);
           });

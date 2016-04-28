@@ -59,10 +59,11 @@ class ContentConnectComponent extends Component {
     this.showDialog = this.showDialog.bind(this);
     this.setFavorit = this.setFavorit.bind(this);
     this.delFavorit = this.delFavorit.bind(this);
+    this.getValue = this.getValue.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  state = { currentFavorit: {} };
+  state = { currentFavorit: { address: 'localhost', port: '5432', sshPort: '22', useSSH: false } };
 
   componentWillReceiveProps(nextProps) {
     for (const favorit of nextProps.favorites) {
@@ -103,7 +104,6 @@ class ContentConnectComponent extends Component {
     const favorites = this.props.favorites;
     let favorit = null;
     const currentFavorit = Object.assign({}, this.state.currentFavorit, this.getValidatorData());
-
     this.setState({ currentFavorit });
     const onValidate = (error) => {
       if (!error) {
@@ -129,6 +129,10 @@ class ContentConnectComponent extends Component {
       }
     };
     this.props.validate(onValidate);
+  }
+
+  getValue(name) {
+    return this.state.currentFavorit[name] ? this.state.currentFavorit[name] : '';
   }
 
   handleSubmit(event) {
@@ -185,7 +189,7 @@ class ContentConnectComponent extends Component {
                     >
                       <div>
                         <form className="m-t" role="form" onSubmit={this.handleSubmit}>
-                          <input type="hidden" ref="id" value={currentFavorit.id} />
+                          <input type="hidden" ref="id" value={this.getValue('id')} />
                           <div className={this.getClasses('name')}>
                             <label className="error">
                               {this.props.getValidationMessages('name')}
@@ -194,7 +198,7 @@ class ContentConnectComponent extends Component {
                               onChange={this.onChange('name')}
                               placeholder="Connection name"
                               ref="name"
-                              value={currentFavorit.name}
+                              value={this.getValue('name')}
                               type="text"
                             />
                           </div>
@@ -207,7 +211,7 @@ class ContentConnectComponent extends Component {
                               placeholder="User"
                               ref="user"
                               type="text"
-                              value={currentFavorit.user}
+                              value={this.getValue('user')}
                               onChange={this.onChange('user')}
                             />
                           </div>
@@ -219,7 +223,7 @@ class ContentConnectComponent extends Component {
                             <input className="form-control" name="password"
                               placeholder="Password"
                               ref="password"
-                              value={currentFavorit.password}
+                              value={this.getValue('password')}
                               type="password"
                               onChange={this.onChange('password')}
                             />
@@ -234,8 +238,7 @@ class ContentConnectComponent extends Component {
                               onChange={this.onChange('address')}
                               placeholder="Host"
                               ref="address"
-                              value={currentFavorit.address}
-                              defaultValue="localhost"
+                              value={this.getValue('address')}
                               type="text"
                             />
                           </div>
@@ -249,7 +252,7 @@ class ContentConnectComponent extends Component {
                               onChange={this.onChange('database')}
                               placeholder="Database"
                               ref="database"
-                              value={currentFavorit.database}
+                              value={this.getValue('database')}
                               type="text"
                             />
                           </div>
@@ -262,8 +265,7 @@ class ContentConnectComponent extends Component {
                               onChange={this.onChange('port')}
                               placeholder="Port"
                               ref="port"
-                              value={currentFavorit.port}
-                              defaultValue="5432"
+                              value={this.getValue('port')}
                               type="text"
                             />
                           </div>
@@ -275,7 +277,7 @@ class ContentConnectComponent extends Component {
                               /> Connect via SSH
                             </label>
                           </div>
-                          { currentFavorit && currentFavorit.useSSH &&
+                          { currentFavorit.useSSH &&
                           <div>
                             <div className={this.getClasses('sshUser')}>
                               <label className="error">
@@ -284,7 +286,7 @@ class ContentConnectComponent extends Component {
                               <input className="form-control" name="sshUser"
                                 onChange={this.onChange('sshUser')}
                                 placeholder="SSH user"
-                                value={currentFavorit.sshUser}
+                                value={this.getValue('sshUser')}
                                 ref="sshUser"
                                 type="text"
                               />
@@ -297,7 +299,7 @@ class ContentConnectComponent extends Component {
                               <input className="form-control" name="sshPassword"
                                 onChange={this.onChange('sshPassword')}
                                 placeholder="SSH password"
-                                value={currentFavorit.sshPassword}
+                                value={this.getValue('sshPassword')}
                                 ref="sshPassword"
                                 type="password"
                               />
@@ -310,7 +312,7 @@ class ContentConnectComponent extends Component {
                               <input className="form-control" name="sshServer"
                                 onChange={this.onChange('sshServer')}
                                 placeholder="SSH server"
-                                value={currentFavorit.sshServer}
+                                value={this.getValue('sshServer')}
                                 ref="sshServer"
                                 type="text"
                               />
@@ -323,8 +325,7 @@ class ContentConnectComponent extends Component {
                               <input className="form-control" name="sshPort"
                                 onChange={this.onChange('sshPort')}
                                 placeholder="SSH port"
-                                defaultValue="22"
-                                value={currentFavorit.sshPort}
+                                value={this.getValue('sshPort')}
                                 ref="sshPort"
                                 type="text"
                               />

@@ -24,7 +24,7 @@ class SidebarConnectComponent extends Component {
   }
 
   setCurrent(itemId) {
-    this.props.setCurrent(this.props.favorites, itemId);
+    this.props.setCurrent(itemId);
   }
 
   render() {
